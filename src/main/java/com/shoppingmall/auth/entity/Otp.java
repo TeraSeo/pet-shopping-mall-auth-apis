@@ -6,25 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "user")
-@Data
-@Builder
+@Table(name = "otp")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseEntity {
+@Data
+@Builder
+@Entity
+public class Otp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
     private String email;
-    private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    private boolean isVerified;
+    private String code;
 
 }

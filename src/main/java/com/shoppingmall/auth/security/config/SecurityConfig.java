@@ -1,7 +1,5 @@
 package com.shoppingmall.auth.security.config;
 
-import com.shoppingmall.auth.security.authenticator.OtpAuthenticationProvider;
-import com.shoppingmall.auth.security.filter.OtpAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final OtpAuthenticationProvider otpAuthenticationProvider;
-
-    @Autowired
-    public SecurityConfig(OtpAuthenticationProvider otpAuthenticationProvider) {
-        this.otpAuthenticationProvider = otpAuthenticationProvider;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -32,19 +23,7 @@ public class SecurityConfig {
         http.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                authorizationManagerRequestMatcherRegistry.requestMatchers("/api/auth/register", "/api/auth/login").permitAll().anyRequest().authenticated());
-
-        http.exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
-                httpSecurityExceptionHandlingConfigurer
-                        .authenticationEntryPoint(
-                                (request, response, authException) -> response.sendError(401)
-                        )
-                        .accessDeniedHandler(
-                                (request, response, accessDeniedException) -> response.sendError(403)
-                        )
-        );
-
-        http.addFilterBefore(new OtpAuthenticationFilter(otpAuthenticationProvider), UsernamePasswordAuthenticationFilter.class);
+                authorizationManagerRequestMatcherRegistry.requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated());
 
         return http.build();
     }

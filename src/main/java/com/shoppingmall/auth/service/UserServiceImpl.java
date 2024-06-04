@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -25,27 +26,54 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean registerUser(User user) {
-        Optional<User> u = userRepository.findByEmail(user.getEmail());
-        if (u.isPresent()) {
-            LOGGER.debug("existing user");
-            return false;
+        if (user.getEmail() != null) {
+            Optional<User> u = userRepository.findByEmail(user.getEmail());
+            if (u.isPresent()) {
+                LOGGER.debug("existing user");
+                return false;
+            }
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+            userRepository.save(user);
+            LOGGER.debug("user registered");
         }
-        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
-        LOGGER.debug("user registered");
         return true;
     }
 
     @Override
     public Boolean loginUser(String email, String password) {
+        if (password != null) {
+            Optional<User> u = userRepository.findByEmail(email);
+            if (u.isPresent()) {
+                User user = u.get();
+                if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+                    setUserUpdatedTime(email);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean checkEmailExistence(String email) {
         Optional<User> u = userRepository.findByEmail(email);
         if (u.isPresent()) {
             User user = u.get();
-            if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            if (user.getPassword() != null) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void setUserUpdatedTime(String email) {
+        Optional<User> u = userRepository.findByEmail(email);
+        if (u.isPresent()) {
+            User user =  u.get();
+            user.setUpdatedAt(LocalDateTime.now());
+            userRepository.save(user);
+        }
     }
 }
