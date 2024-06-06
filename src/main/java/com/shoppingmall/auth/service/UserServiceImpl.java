@@ -47,7 +47,8 @@ public class UserServiceImpl implements UserService {
             if (u.isPresent()) {
                 User user = u.get();
                 if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-                    setUserUpdatedTime(email);
+//                    User updatedUser = setUserUpdatedTime(user);
+//                    userRepository.save(updatedUser);
                     return true;
                 }
             }
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> u = userRepository.findByEmail(email);
         if (u.isPresent()) {
             User user = u.get();
-            if (user.getPassword() != null) {
+            if (user.getPassword() != null && user.getPassword() != "") {
                 return true;
             }
         }
@@ -68,12 +69,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setUserUpdatedTime(String email) {
+    public User setUserUpdatedTime(User user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        return user;
+    }
+
+    @Override
+    public Boolean resetPassword(String email, String password) {
         Optional<User> u = userRepository.findByEmail(email);
         if (u.isPresent()) {
             User user =  u.get();
-            user.setUpdatedAt(LocalDateTime.now());
-            userRepository.save(user);
+            String encodedPassword = bCryptPasswordEncoder.encode(password);
+            user.setPassword(encodedPassword);
+            User updatedUser = setUserUpdatedTime(user);
+            userRepository.save(updatedUser);
+            return true;
         }
+        return false;
     }
 }

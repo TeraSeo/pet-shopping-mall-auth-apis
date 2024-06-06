@@ -41,4 +41,13 @@ public class AuthController {
         Boolean isEmailValid = userService.checkEmailExistence(email);
         return ResponseEntity.ok(isEmailValid);
     }
+
+    @PutMapping("/reset/password")
+    public ResponseEntity<Boolean> resetPassword(@RequestBody User user) {
+        String email = user.getEmail();
+        String password = user.getPassword();
+        LOGGER.debug("reset password");
+        Boolean isChanged = userService.resetPassword(email, password);
+        return ResponseEntity.ok(isChanged);
+    }
 }
