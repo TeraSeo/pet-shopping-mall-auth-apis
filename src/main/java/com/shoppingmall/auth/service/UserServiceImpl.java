@@ -47,8 +47,8 @@ public class UserServiceImpl implements UserService {
             if (u.isPresent()) {
                 User user = u.get();
                 if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
-//                    User updatedUser = setUserUpdatedTime(user);
-//                    userRepository.save(updatedUser);
+                    User updatedUser = user.updateModifiedDate();
+                    userRepository.save(updatedUser);
                     return true;
                 }
             }

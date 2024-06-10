@@ -27,4 +27,9 @@ public class User extends BaseEntity {
 
     private boolean isVerified;
 
+    public User updateModifiedDate() {
+        this.onPreUpdate();
+        return this;
+    }
+
 }

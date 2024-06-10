@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @GetMapping("/email/valid")
-    public ResponseEntity<Boolean> login(@RequestHeader String email) {
+    public ResponseEntity<Boolean> checkEmailExistence(@RequestHeader String email) {
         LOGGER.debug("check is email valid");
         Boolean isEmailValid = userService.checkEmailExistence(email);
         return ResponseEntity.ok(isEmailValid);
