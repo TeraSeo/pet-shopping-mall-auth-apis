@@ -1,6 +1,7 @@
 package com.shoppingmall.auth.service;
 
 import com.shoppingmall.auth.entity.User;
+import com.shoppingmall.auth.security.jwt.JwtToken;
 
 import java.util.Optional;
 
@@ -14,4 +15,6 @@ public interface UserService {
     User setUserUpdatedTime(User user);
 
     Boolean resetPassword(String email, String password);
+
+    JwtToken checkIsVerified(String email);
 }

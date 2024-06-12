@@ -21,11 +21,9 @@ public class User extends BaseEntity {
     private String name;
     private String email;
     private String password;
-
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    private boolean isVerified;
+    private Boolean isVerified;
 
     public User updateModifiedDate() {
         this.onPreUpdate();
