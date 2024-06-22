@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -113,4 +114,17 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public Long getUserId(String email) {
+        Optional<User> u = userRepository.findByEmail(email);
+        if (u.isPresent()) {
+            User user = u.get();
+            Long id = user.getId();
+            return id;
+        }
+        throw new UsernameNotFoundException("User not found");
+    }
+
+
 }

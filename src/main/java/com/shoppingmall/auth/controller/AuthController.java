@@ -3,6 +3,7 @@ package com.shoppingmall.auth.controller;
 import com.shoppingmall.auth.entity.Role;
 import com.shoppingmall.auth.entity.User;
 import com.shoppingmall.auth.security.jwt.JwtToken;
+import com.shoppingmall.auth.security.jwt.JwtTokenProvider;
 import com.shoppingmall.auth.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,11 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/login")
@@ -70,5 +74,12 @@ public class AuthController {
             return new ResponseEntity<>(true, headers, HttpStatus.OK);
         }
         return new ResponseEntity<>(false, HttpStatus.OK);
+    }
+
+    @GetMapping("/get/userId")
+    public ResponseEntity<Long> getUserId(@RequestParam String email) {
+        LOGGER.debug("get user id");
+        Long userId = userService.getUserId(email);
+        return new ResponseEntity<>(userId, HttpStatus.OK);
     }
 }

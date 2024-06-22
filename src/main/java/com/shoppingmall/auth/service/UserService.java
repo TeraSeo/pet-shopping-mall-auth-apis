@@ -17,4 +17,6 @@ public interface UserService {
     Boolean resetPassword(String email, String password);
 
     JwtToken checkIsVerified(String email);
+
+    Long getUserId(String email);
 }
