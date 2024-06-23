@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "user")
 @Data
@@ -24,6 +27,9 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isVerified;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<ProductDetail> productDetails;
 
     public User updateModifiedDate() {
         this.onPreUpdate();
